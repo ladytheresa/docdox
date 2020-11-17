@@ -1,0 +1,11 @@
+input{
+    border:none;
+    background-color: white;
+    border-radius: 15px;
+
+}
+.input-group{
+    background-color: white;
+    border-radius: 15px;
+    padding: 5px;
+}
