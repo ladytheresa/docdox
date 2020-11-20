@@ -9,12 +9,20 @@ export class HomeComponent implements OnInit {
   fakeGroup = Array(3);
   clicked: boolean = false;
   selected: string;
+  private selectedFile: File;
+  filename: string = "";
   constructor() {}
 
   ngOnInit(): void {}
 
   oneClick(){
     console.log('one click');
+  }
+
+  onFileSelect(event) {
+    this.selectedFile = event.target.files[0];
+    console.log(this.selectedFile.name);
+    this.filename = this.selectedFile.name;
   }
 
   selectGroup(event){
