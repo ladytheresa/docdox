@@ -1,0 +1,8 @@
+{
+    "/temp/*": {
+      "target": "https://www.soundczech.cz",
+      "secure": true,
+      "logLevel": "debug",
+      "changeOrigin": true
+    }
+  }
