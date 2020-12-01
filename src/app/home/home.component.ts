@@ -1,4 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-home",
@@ -11,9 +14,23 @@ export class HomeComponent implements OnInit {
   selected: string;
   private selectedFile: File;
   filename: string = "";
-  constructor() {}
+  trying = [];
+  uploadForm: FormGroup
 
-  ngOnInit(): void {}
+  constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router) {
+    this.http.get('http://localhost/docdox/tryout.php').subscribe(data => {
+      this.trying.push(data);
+      console.log(this.trying);
+    })
+  }
+
+  get f() { return this.uploadForm.controls; }
+
+  ngOnInit(): void {
+    this.uploadForm = this.formBuilder.group({
+      share: ['', Validators.required]
+    });
+  }
 
   oneClick(){
     console.log('one click');
@@ -41,5 +58,9 @@ export class HomeComponent implements OnInit {
 
   doubleClick(){
     console.log('double click');
+  }
+
+  onUploadDoc(){
+    console.log("uploaded");
   }
 }

@@ -69,7 +69,7 @@
         
     </div>
 
-    <div class="col-7" >
+        <div class="col-7" >
         <div class="row">
             <div class="col-10" style="margin-bottom:25px;"><h5><b>Needing Approval</b></h5></div>
             <div>Name <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -205,74 +205,76 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-body" style="margin: 15px;">
-            <div class="form-group" style="margin-top: 10px;">
-                <h5 class="modal-title" id="uploadModalLabel"><b>Upload new document</b></h5>
-            </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <button class="btn btn-outline-primary btn-block" (click)="hiddenfileinput.click()">
-                    <div *ngIf="filename==''">
-                        UPLOAD
-                    </div>
-                    <div *ngIf="filename!=null">
-                        {{this.filename}}
-                    </div>
-                    <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput>
-                </button>
-            </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <h5><b>Detail</b></h5>
-            </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <div class="row">
-                    <div class="col-6">
-                        <input type="checkbox">&nbsp;Require Digital Signature
-                    </div>
-                    <div class="col-6">
-                        <div class="form-inline">
-                            <label>Due Date&nbsp;</label>
-                            <input type="date" placeholder="Due Date" class="form-control">    
+            <form [formGroup]="uploadForm" (ngSubmit)="onUploadDoc()">            
+                <div class="form-group" style="margin-top: 10px;">
+                    <h5 class="modal-title" id="uploadModalLabel"><b>Upload new document</b></h5>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <button class="btn btn-outline-primary btn-block" (click)="hiddenfileinput.click()">
+                        <div *ngIf="filename==''">
+                            UPLOAD
+                        </div>
+                        <div *ngIf="filename!=null">
+                            {{this.filename}}
+                        </div>
+                        <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput>
+                    </button>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <h5><b>Detail</b></h5>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="checkbox">&nbsp;Require Digital Signature
+                        </div>
+                        <div class="col-6">
+                            <div class="form-inline">
+                                <label>Due Date&nbsp;</label>
+                                <input type="date" placeholder="Due Date" class="form-control">    
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlSelect1">Share to</label>
-                <select class="form-control" id="formControlShare">
-                    <option *ngFor="let group of fakeGroup">Group name</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <label>Type</label></div>
-            <div class="form-group row" style="margin-left: 10px;">
-                <div class="col-6">
-                    <input class="form-check-input" type="radio" name="typeRadio" id="typeRadio" value="pararel" checked>
-                    <label class="form-check-label" for="typeRadio">
-                      Pararel</label>    
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Share to</label>
+                    <select class="form-control" id="formControlShare" formControlName="share">
+                        <option *ngFor="let group of fakeGroup">Group name</option>
+                    </select>
                 </div>
-                <div class="col-6">
-                    <input class="form-check-input" type="radio" name="typeRadio" id="typeRadio" value="serial">
-                    <label class="form-check-label" for="typeRadio">
-                    Serial</label>
-  
-                </div>
-            </div>
-            <div>
-                Designated For
-            </div>
-            <div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <input type="email" class="form-control" placeholder="Enter email address" aria-label="Email">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" type="button" style="padding: 0px 50px;">Invite</button>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Type</label></div>
+                <div class="form-group row" style="margin-left: 10px;">
+                    <div class="col-6">
+                        <input class="form-check-input" type="radio" name="typeRadio" id="typeRadio" value="pararel" checked>
+                        <label class="form-check-label" for="typeRadio">
+                        Pararel</label>    
                     </div>
-                  </div>
-                  </div>
-                  
-            <div style="float: right; margin-top: 20px;">
-                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" style="padding: 10px 40px; border-radius: 35px;">Cancel</button>&nbsp;
-                <button type="button" class="btn btn-outline-primary" style="padding: 10px 40px;border-radius: 35px;">Upload</button>
-            </div>
-            </div> <!--end of modal body-->
+                    <div class="col-6">
+                        <input class="form-check-input" type="radio" name="typeRadio" id="typeRadio" value="serial">
+                        <label class="form-check-label" for="typeRadio">
+                        Serial</label>
+    
+                    </div>
+                </div>
+                <div>
+                    Designated For
+                </div>
+                <div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <input type="email" class="form-control" placeholder="Enter email address" aria-label="Email">
+                        <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" style="padding: 0px 50px;">Invite</button>
+                        </div>
+                    </div>
+                    </div>
+                    
+                <div style="float: right; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" style="padding: 10px 40px; border-radius: 35px;">Cancel</button>&nbsp;
+                    <button type="button" class="btn btn-outline-primary" style="padding: 10px 40px;border-radius: 35px;" type="submit">Upload</button>
+                </div>
+            </form>
+        </div> <!--end of modal body-->
 
       </div>
     </div>
