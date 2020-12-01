@@ -1,0 +1,24 @@
+{
+    "/temp/*": {
+      "target": "https://www.soundczech.cz",
+      "secure": true,
+      "logLevel": "debug",
+      "changeOrigin": true
+    },
+    
+    "/o/*": {
+      "target": "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com",
+      "secure": true,
+      "logLevel": "debug",
+      "changeOrigin": true
+     },
+
+    "/docdox/*": {
+      "target": "http://localhost",
+      "secure": true,
+      "logLevel": "debug",
+      "changeOrigin": true
+     }
+
+}
+  
