@@ -6,12 +6,18 @@
          <div class="row justify-content-md-center" style="margin-bottom: 20px;">
             <img src="assets/text white.png" alt="DOCDOX" height="50%">
          </div>
-    
+    <form [formGroup]="loginForm">
         <div class="row">
             <div class="col-3"></div>
             <div class="col-6">
-                <input class="form-control" type="text" placeholder="Email" style="margin-top:20px;">
-                <input class="form-control" type="password" placeholder="Password" style="margin-top:20px;">
+                <input class="form-control" type="email" placeholder="Email" style="margin-top:20px;" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.required">Email is required</div>
+                </div> 
+                <input class="form-control" type="password" placeholder="Password" style="margin-top:20px;" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                    <div *ngIf="f.password.errors.required">Password is required</div>
+                </div> 
             </div>
             <div class="col-3"></div>
          </div>
@@ -20,11 +26,12 @@
             <div class="col-3"></div>
             <div class="col-6" style="margin-top: 20px;">
                 <div style="color: white; text-align: left;">Forgot your password?
-                <button class="btn btn-light" style="float: right; border-radius: 30px;">&nbsp;Login&nbsp;</button>
+                <button type="submit" class="btn btn-light" style="float: right; border-radius: 30px;" (click)="login()">&nbsp;Login&nbsp;</button>
             </div>
             </div>
             <div class="col-3"></div>
          </div>
-        
+        </form>
+
     </div>
     </div>
