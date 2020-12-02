@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
+import { AngularFireStorage } from '@angular/fire/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -17,8 +18,9 @@ export class HomeComponent implements OnInit {
   trying = [];
   uploadForm: FormGroup
 
-  constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router) {
-    this.http.get('http://localhost/docdox/tryout.php').subscribe(data => {
+  constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router,
+    private storage: AngularFireStorage) {
+    this.http.get('docdox/user.php').subscribe(data => {
       this.trying.push(data);
       console.log(this.trying);
     })
@@ -28,7 +30,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.uploadForm = this.formBuilder.group({
-      share: ['', Validators.required]
+      document: ['', Validators.required]
     });
   }
 
@@ -61,6 +63,24 @@ export class HomeComponent implements OnInit {
   }
 
   onUploadDoc(){
-    console.log("uploaded");
+    console.log(this.uploadForm.value);
+    this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges().subscribe(res => {
+      
+    });
+    if(this.uploadForm.invalid){
+      return;
+     } else {
+       var myFormData = new FormData();
+       const headers = new HttpHeaders();
+       myFormData.append('documentName', this.filename);
+       return this.http.post('docdox/document.php/', myFormData).subscribe((res: any) => {
+         console.log(res.response);
+         if(res.response == 200){
+           this.router.navigate(['']);
+         } else if(res.response == 400){
+           
+         }
+       })
+     }
   }
 }

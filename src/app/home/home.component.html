@@ -217,7 +217,7 @@
                         <div *ngIf="filename!=null">
                             {{this.filename}}
                         </div>
-                        <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput>
+                        <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput formControlName="document">
                     </button>
                 </div>
                 <div class="form-group" style="margin-top: 10px;">
@@ -238,7 +238,7 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Share to</label>
-                    <select class="form-control" id="formControlShare" formControlName="share">
+                    <select class="form-control" id="formControlShare">
                         <option *ngFor="let group of fakeGroup">Group name</option>
                     </select>
                 </div>
