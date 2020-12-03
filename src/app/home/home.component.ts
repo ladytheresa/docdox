@@ -113,10 +113,16 @@ export class HomeComponent implements OnInit {
   uploadDocument(){ //upload modal
     this.submitted=true;
     this.uploadDoc.controls['designated'].setValue(this.arrTempDes);
-    if(this.uploadDoc.get('signature').value == ""){
+    let a = this.uploadDoc.get('fileName').value;  let file = a.split('\\fakepath\\', 2);
+    let b = file[1];
+    this.uploadDoc.controls['fileName'].setValue(b);
+    
+    console.log(this.uploadDoc.get('fileName').value);
+    if(this.uploadDoc.get('signature').value == "" || this.uploadDoc.get('signature').value ==null){
       this.uploadDoc.controls['signature'].setValue("false");
     }
     if (this.uploadDoc.invalid) {
+      this.uploadDoc.reset(); 
       return;
     }
     console.log(this.uploadDoc.value);
