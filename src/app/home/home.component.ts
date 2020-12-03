@@ -16,14 +16,16 @@ export class HomeComponent implements OnInit {
   private selectedFile: File;
   filename: string = "";
   pdfSrc = "";
-  isVisible: boolean = false;  
   addGroup: FormGroup;
   editGroup: FormGroup;
   uploadDoc: FormGroup;
+  approveForm: FormGroup;
+  rejectForm: FormGroup;
   submitted = false;
   arrTempAdd : any[] = [];
   arrTempDes : any[] = [];
   arrTempEdit : any[] = [];
+  groupindex = 0;
 
   constructor(
     private formBuilder: FormBuilder
@@ -46,12 +48,19 @@ export class HomeComponent implements OnInit {
       doctype: ['', Validators.required],
       designated:['',Validators.required]
     });
-
-
+    this.approveForm = this.formBuilder.group({
+      notes: [''],
+      signaturedoc:[null]
+    });
+    this.rejectForm = this.formBuilder.group({
+      notes: ['',Validators.required],
+      //signaturedoc:[null]
+    });
   }
   get f() { return this.addGroup.controls;}
   get a() { return this.editGroup.controls;}
   get d() { return this.uploadDoc.controls;}
+  get e() { return this.approveForm.controls;}
 
   popAdd(index){
     this.arrTempAdd.splice(index,1);
@@ -62,7 +71,6 @@ export class HomeComponent implements OnInit {
   popDes(index){
     this.arrTempDes.splice(index,1);
   }
-
   push(){
     let email = this.addGroup.get('membersEmail').value;
     console.log(email);
@@ -79,6 +87,7 @@ export class HomeComponent implements OnInit {
     this.arrTempEdit.push(email);
   }
 
+  //MODAL SUBMITS
   createGroup(){ //add group modal
     this.submitted=true;
     this.addGroup.controls['membersEmail'].setValue(this.arrTempAdd);
@@ -90,7 +99,6 @@ export class HomeComponent implements OnInit {
     this.addGroup.reset(); 
     this.arrTempAdd = [];
   }
-
   saveChanges(){ //edit group modal
     this.submitted=true;
     this.editGroup.controls['emembersEmail'].setValue(this.arrTempEdit);
@@ -105,6 +113,9 @@ export class HomeComponent implements OnInit {
   uploadDocument(){ //upload modal
     this.submitted=true;
     this.uploadDoc.controls['designated'].setValue(this.arrTempDes);
+    if(this.uploadDoc.get('signature').value == ""){
+      this.uploadDoc.controls['signature'].setValue("false");
+    }
     if (this.uploadDoc.invalid) {
       return;
     }
@@ -112,9 +123,31 @@ export class HomeComponent implements OnInit {
     this.submitted=false;
     this.uploadDoc.reset(); 
     this.arrTempDes = [];
+    this.filename="";
+  }
+  approve(){//approve doc modal
+    this.submitted=true;
+    if (this.approveForm.invalid) {
+      console.log("invalid");
+      return;
+    }
+    console.log(this.approveForm.value);
+    this.submitted=false;
+    this.approveForm.reset(); 
+    this.filename="";
+  }
+  reject(){//reject doc modal
+    this.submitted=true;
+    if (this.rejectForm.invalid) {
+      console.log("invalid");
+      return;
+    }
+    console.log(this.rejectForm.value);
+    this.submitted=false;
+    this.rejectForm.reset(); 
   }
 
-  //not yet working
+  // Move Up Move Down Group (NOT YET WORKING)
   moveUp(index: number) {
     console.log("up", this.fakeGroup[index]);
     if (index >= 1)
@@ -129,26 +162,34 @@ export class HomeComponent implements OnInit {
     var b = this.fakeGroup[x];
     this.fakeGroup[x] = this.fakeGroup[y];
     this.fakeGroup[y] = b;
-  }//not working stops here
+  }
 
-  oneClick(){ //single click card
+  oneClick(){ // SINGLE CLICK CARD
     this.isSingleClick=true;
     setTimeout(()=>{
       if(this.isSingleClick){
         console.log('one click');
         this.docdetails = true;
-        this.groupdetails=false;    
+        this.groupdetails=false;
+        let sign = "false"; //setting signature required or not
+        if(sign === "true"){
+          this.approveForm.get("signaturedoc").setValidators([Validators.required]);
+          console.log("signature required");
+        } else {       
+          this.approveForm.get("signaturedoc").setValidators([]);
+        }        
+        this.approveForm.controls["signaturedoc"].updateValueAndValidity();
       }
     }, 250);
   }
 
-  onFileSelect(event) {
+  onFileSelect(event) {//AFTER SELECTING FILE
     this.selectedFile = event.target.files[0];
     console.log(this.selectedFile.name);
     this.filename = this.selectedFile.name;
   }
 
-  selectGroup(event){//double click group
+  selectGroup(event){//DOUBLE CLICK GROUP
     this.docdetails = false;
     this.groupdetails=true;
     let target = event.target;
@@ -164,25 +205,22 @@ export class HomeComponent implements OnInit {
     console.log(target);
   }
 
-  doubleClick(){//doubleclick card
+  doubleClick(){//DOUBLE CLICK CARD TO PREVIEW PDF
     console.log('double click');
     this.isSingleClick=false;
-    //this.openDoc('assets/dummy/00000020013_JoyAmadea_ProposalSkripsi.pdf',1); this is for  new tab
     var str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
     let link = str.split("/o/", 2);
     //console.log(link[1]);
     this.pdfSrc="o/"+link[1];
     
     document.getElementById("openPreviewButton").click();
-    //this.isVisible = true;
   }
 
-  /*containerClicked(){
-    if(this.isVisible==true){
-      this.isVisible=false;
-    }
-  }*/
-  /*openDoc(pdfUrl: string, startPage: number ) {
-    window.open(pdfUrl + '#page=' + startPage, '_blank', '', true);
-  }*/
+  logIndex(el){ //test passing data to modal
+
+    this.groupindex = el.getAttribute('indexvalue');
+    //let messageId = el.dataset.messageId;
+    console.log("Index value: ", this.groupindex);
+
+  }
 }
