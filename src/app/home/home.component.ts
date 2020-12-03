@@ -114,8 +114,8 @@ export class HomeComponent implements OnInit {
     this.submitted=true;
     this.uploadDoc.controls['designated'].setValue(this.arrTempDes);
     let a = this.uploadDoc.get('fileName').value;  let file = a.split('\\fakepath\\', 2);
-    let b = file[1];
-    this.uploadDoc.controls['fileName'].setValue(b);
+    console.log(file[1]);
+    //this.uploadDoc.controls['fileName'].setValue(file[1]);
     
     console.log(this.uploadDoc.get('fileName').value);
     if(this.uploadDoc.get('signature').value == "" || this.uploadDoc.get('signature').value ==null){
