@@ -1,5 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
+import { AngularFireStorage } from '@angular/fire/storage';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { DocumentService } from '../services/document.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: "app-home",
@@ -26,12 +30,17 @@ export class HomeComponent implements OnInit {
   arrTempDes : any[] = [];
   arrTempEdit : any[] = [];
   groupindex = 0;
+  groups: any;
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private documentService: DocumentService,
+    private userService: UserService,
+    private storage: AngularFireStorage
   ) {}
 
   ngOnInit() {
+    this.fetchData();
     this.addGroup = this.formBuilder.group({
       groupName: ['',Validators.required],
       membersEmail:['',Validators.required]
@@ -57,6 +66,13 @@ export class HomeComponent implements OnInit {
       //signaturedoc:[null]
     });
   }
+
+  fetchData(){
+    this.userService.getGroups().then((res: any) => {
+      this.groups = res.result;
+    })
+  }
+
   get f() { return this.addGroup.controls;}
   get a() { return this.editGroup.controls;}
   get d() { return this.uploadDoc.controls;}
@@ -118,12 +134,30 @@ export class HomeComponent implements OnInit {
     }
     if (this.uploadDoc.invalid) {
       return;
+    } else {
+      console.log(this.uploadDoc.value);
+      var myFormData = new FormData();
+      myFormData.append('documentName', this.filename);
+      myFormData.append('due', this.uploadDoc.value.duedate);
+      myFormData.append('type', this.uploadDoc.value.doctype);
+      myFormData.append('sign', this.uploadDoc.value.signature);
+      myFormData.append('designated', this.uploadDoc.value.designated);
+      myFormData.append('shared', this.uploadDoc.value.sharedgroup);
+      console.log(this.uploadDoc.value.dueDate);
+      this.documentService.postDoc(myFormData).then((res: any) => {
+        console.log(res);
+        if(res.status == 200 ){
+          this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges();
+          this.uploadDoc.reset(); 
+          this.arrTempDes = [];
+          this.filename="";
+        }
+      })
+      
     }
-    console.log(this.uploadDoc.value);
+    
     this.submitted=false;
-    this.uploadDoc.reset(); 
-    this.arrTempDes = [];
-    this.filename="";
+    
   }
   approve(){//approve doc modal
     this.submitted=true;
@@ -149,19 +183,19 @@ export class HomeComponent implements OnInit {
 
   // Move Up Move Down Group (NOT YET WORKING)
   moveUp(index: number) {
-    console.log("up", this.fakeGroup[index]);
+    console.log("up", this.groups[index]);
     if (index >= 1)
       this.swap(index, index - 1)
   }
   moveDown(index: number) {
-    console.log("down", this.fakeGroup[index])
-    if(index < this.fakeGroup.length-1)
+    console.log("down", this.groups[index])
+    if(index < this.groups.length-1)
     this.swap(index, index + 1)
   }
   private swap(x: any, y: any) {
-    var b = this.fakeGroup[x];
-    this.fakeGroup[x] = this.fakeGroup[y];
-    this.fakeGroup[y] = b;
+    var b = this.groups[x];
+    this.groups[x] = this.groups[y];
+    this.groups[y] = b;
   }
 
   oneClick(){ // SINGLE CLICK CARD
