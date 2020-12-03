@@ -20,10 +20,12 @@ export class HomeComponent implements OnInit {
 
   constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router,
     private storage: AngularFireStorage) {
-    this.http.get('docdox/user.php').subscribe(data => {
-      this.trying.push(data);
-      console.log(this.trying);
-    })
+      this.http.get('docdox/check_user.php').subscribe((res: any) => {
+        console.log(res);
+        if(res.status == 400){
+          this.router.navigate(['/login']);
+        }
+      })
   }
 
   get f() { return this.uploadForm.controls; }
@@ -73,7 +75,7 @@ export class HomeComponent implements OnInit {
        var myFormData = new FormData();
        const headers = new HttpHeaders();
        myFormData.append('documentName', this.filename);
-       return this.http.post('docdox/document.php/', myFormData).subscribe((res: any) => {
+       return this.http.post('docdox/postdocument.php/', myFormData).subscribe((res: any) => {
          console.log(res.response);
          if(res.response == 200){
            this.router.navigate(['']);
