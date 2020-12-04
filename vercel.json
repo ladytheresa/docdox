@@ -18,15 +18,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
       ]
     }
-  ],
-  "routes":[
-      {
-          "src":"/o/*",
-          "dest":"https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com"
-      },
-      {
-          "src":"/docdox/*",
-          "dest":"https://docdox-dev.000webhostapp.com"
-      }
   ]
 }
