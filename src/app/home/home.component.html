@@ -34,8 +34,8 @@
                 </svg>
             </button>
         </div>
-        <div class="button-group-vertical" *ngFor="let group of fakeGroup; index as i;" (dblclick)="selectGroup($event)" attr.indexvalue="{{i}}" #numIndex>
-            <button class="btn btn-outline-primary btn-block" routerLink="" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">Group {{i+1}} 
+        <div class="button-group-vertical" *ngFor="let group of groups; index as i;" (dblclick)="selectGroup($event)" attr.indexvalue="{{i}}" #numIndex>
+            <button class="btn btn-outline-primary btn-block" routerLink="" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">{{ group.group_name }}
             <button type="button" class="btn-primary dropdown-toggle-split" style="float: right;border: none; background: transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownMenuButton" >
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
@@ -262,8 +262,8 @@
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Share to</label>
                 <select class="form-control" id="formControlShare" formControlName="sharedgroup" [ngClass]="{ 'is-invalid': submitted && d.sharedgroup.errors }">
-                    <option></option>
-                    <option *ngFor="let group of fakeGroup">Group name</option>
+                    <option value="">Choose a Group</option>
+                    <option *ngFor="let group of groups" value="{{ group.group_id }}">{{ group.group_name }}</option>
                 </select>
                 <div *ngIf="submitted && d.sharedgroup.errors" class="invalid-feedback">
                     <div *ngIf="d.sharedgroup.errors.required">Shared group is required</div>
