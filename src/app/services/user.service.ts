@@ -20,4 +20,30 @@ export class UserService {
       );
     });
   }
+
+  login(value){
+    return new Promise((resolve, reject) => {
+      this.http.post('docdox/user.php', value).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  checkUser(){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/check_user.php').subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      )
+    })
+  }
 }

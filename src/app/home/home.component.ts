@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
 import { AngularFireStorage } from '@angular/fire/storage';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DocumentService } from '../services/document.service';
 import { UserService } from '../services/user.service';
 
@@ -36,7 +37,8 @@ export class HomeComponent implements OnInit {
     private formBuilder: FormBuilder,
     private documentService: DocumentService,
     private userService: UserService,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -70,6 +72,11 @@ export class HomeComponent implements OnInit {
   fetchData(){
     this.userService.getGroups().then((res: any) => {
       this.groups = res.result;
+    })
+    this.userService.checkUser().then((res: any) => {
+      if(res.status == 400){
+        this.router.navigate(['/login']);
+      }
     })
   }
 
@@ -147,7 +154,9 @@ export class HomeComponent implements OnInit {
       this.documentService.postDoc(myFormData).then((res: any) => {
         console.log(res);
         if(res.status == 200 ){
-          this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges();
+          this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges().subscribe(res => {
+
+          });
           this.uploadDoc.reset(); 
           this.arrTempDes = [];
           this.filename="";
