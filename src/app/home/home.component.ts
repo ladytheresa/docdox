@@ -265,6 +265,10 @@ export class HomeComponent implements OnInit {
     document.getElementById("openPreviewButton").click();
   }
 
+  logout(){
+
+  }
+  
   logIndex(el){ //test passing data to modal
 
     this.groupindex = el.getAttribute('indexvalue');
