@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/*",
+      "source": "/o/*",
       "headers": [
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
