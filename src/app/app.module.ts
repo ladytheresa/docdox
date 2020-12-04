@@ -6,6 +6,10 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { environment } from '../environments/environment';
 //import { AngularFireModule } from '@angular/fire';
 
 @NgModule({
@@ -19,10 +23,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxExtendedPdfViewerModule
-    //AngularFireModule    
+    NgxExtendedPdfViewerModule,
+    HttpClientModule,
+    AngularFireStorageModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig), 
   ],
-  providers: [],
+  providers: [ HttpClient ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
