@@ -257,11 +257,10 @@ export class HomeComponent implements OnInit {
   doubleClick(){//DOUBLE CLICK CARD TO PREVIEW PDF
     console.log('double click');
     this.isSingleClick=false;
-    let str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
+    var str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
     let link = str.split("/o/", 2);
     //console.log(link[1]);
-    this.pdfSrc=str;
-    console.log(str);
+    this.pdfSrc="o/"+link[1];
     
     document.getElementById("openPreviewButton").click();
   }
