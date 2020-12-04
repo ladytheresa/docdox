@@ -17,7 +17,10 @@
       "target": "https://docdox-dev.000webhostapp.com",
       "secure": true,
       "logLevel": "debug",
-      "changeOrigin": true
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/docdox": ""
+      }
      }
 
 }
