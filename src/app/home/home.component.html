@@ -16,8 +16,17 @@
             <input class="form-control" type="search" placeholder="Search" style="border:none;" >
         </div>
     </div> 
-    <div class="col-3" style="text-align: right;color: white;">        
-        Hello, <b>Name</b>     
+    <div class="col-3" style="text-align: right;color: white;">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                <div class="nav-item dropdown-toggle" style="float: inline-end;" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Hello, <b>Name</b></div>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown" role="menu" style="float: right;">
+                    <li><a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
+                </ul>    
+            </div>
+        </div>        
     </div>  
 
 </nav>
@@ -510,6 +519,27 @@
             </div>
             </form>
             </div> <!--end of modal body-->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="logoutModalLabel"><b>Are you sure you want to log out?</b></h5>
+          </div>
+        <div class="modal-body" style="margin: 10px;">
+            You will have to relogin to see your documents
+        </div><!--end of body-->
+        <div class="modal-footer">
+            <div style="float: right;">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" style="padding: 10px 40px; border-radius: 35px;">Cancel</button>&nbsp;
+                <button type="submit" class="btn btn-outline-danger" style="padding: 10px 40px;border-radius: 35px;" (click)="logout()">Logout</button>
+            </div>
+        </div> <!--end of modal footer-->
 
       </div>
     </div>
