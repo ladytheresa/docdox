@@ -43,7 +43,7 @@
                 </svg>
             </button>
         </div>
-        <div class="button-group-vertical" *ngFor="let group of groups; index as i;" (dblclick)="selectGroup($event)" attr.indexvalue="{{i}}" #numIndex>
+        <div class="button-group-vertical" *ngFor="let group of groups; index as i;" (dblclick)="selectGroup($event)" attr.selectedGroupID="{{group.group_id}}" #selectedGroupID>
             <button class="btn btn-outline-primary btn-block" routerLink="" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">{{ group.group_name }}
             <button type="button" class="btn-primary dropdown-toggle-split" style="float: right;border: none; background: transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownMenuButton" >
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +51,7 @@
                   </svg>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" role="menu">
-                <li><a class="dropdown-item" data-toggle="modal" data-target="#editgroupModal"  (click)="logIndex(numIndex)">Edit</a></li>
+                <li><a class="dropdown-item" data-toggle="modal" data-target="#editgroupModal"  (click)="logGroupID(selectedGroupID)">Edit</a></li>
                 <li><a class="dropdown-item" (click)="moveUp(i)">Move Up</a></li>
                 <li><a class="dropdown-item" (click)="moveDown(i)">Move Down</a></li>
                 <li><a class="dropdown-item">Delete</a></li>
@@ -253,19 +253,12 @@
                 <h5><b>Detail</b></h5>
             </div>
             <div class="form-group" style="margin-top: 10px;">
-                <div class="row">
-                    <div class="col-6">
-                        <input type="checkbox" formControlName="signature">&nbsp;Require Digital Signature
-                    </div>
-                    <div class="col-6">
-                        <div class="form-inline">
-                            <label>Due Date&nbsp;</label>
-                            <input type="date" placeholder="Due Date" class="form-control" formControlName="duedate" [ngClass]="{ 'is-invalid': submitted && d.duedate.errors }">  
-                            <div *ngIf="submitted && d.duedate.errors" class="invalid-feedback">
-                                <div *ngIf="d.duedate.errors.required">Due date required</div>
-                            </div>                      
-                        </div>
-                    </div>
+                <div class="form-inline">
+                    <label>Due Date&nbsp;</label>
+                    <input type="date" placeholder="Due Date" class="form-control" formControlName="duedate" [ngClass]="{ 'is-invalid': submitted && d.duedate.errors }">  
+                    <div *ngIf="submitted && d.duedate.errors" class="invalid-feedback">
+                        <div *ngIf="d.duedate.errors.required">Due date required</div>
+                    </div>                      
                 </div>
             </div>
             <div class="form-group">
@@ -401,7 +394,7 @@
                 Group Name
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Enter group name" formControlName="egroupName" [ngClass]="{ 'is-invalid': submitted && a.egroupName.errors }" value="{{this.groupindex}}">
+                <input type="text" class="form-control" placeholder="Enter group name" formControlName="egroupName" [ngClass]="{ 'is-invalid': submitted && a.egroupName.errors }" value="{{this.selectedGroupID}}">
                 <div *ngIf="submitted && a.egroupName.errors" class="invalid-feedback">
                     <div *ngIf="a.egroupName.errors.required">Group name is required</div>
                 </div>        
@@ -468,25 +461,12 @@
       <div class="modal-content">
         <div class="modal-body" style="margin: 15px;">
             <form [formGroup]="approveForm">
-
             <div class="form-group" style="margin-top: 10px;">
                 <h5 class="modal-title" id="uploadModalLabel"><b>Doc 1 Approval</b></h5>
             </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <button class="btn btn-outline-primary btn-block" (click)="hiddenfileinput2.click()">
-                    <div *ngIf="filename==''">
-                        UPLOAD
-                    </div>
-                    <div *ngIf="filename!=null">
-                        {{this.filename}}
-                    </div>
-                    <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput2 formControlName="signaturedoc">
-                </button>
-
-            </div>  
             <div class="form-group">
                 <label>Additional Notes</label>
-                <textarea class="form-control" style="resize: none;" rows="11" formControlName="notes"></textarea>
+                <textarea class="form-control" style="resize: none;" rows="12" formControlName="notes"></textarea>
             </div>                
             <div style="float: right; margin-top: 20px;">
                 <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" style="padding: 10px 40px; border-radius: 35px;">Cancel</button>&nbsp;
