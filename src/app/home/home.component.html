@@ -21,7 +21,7 @@
             <div class="col"></div>
             <div class="col">
                 <div class="nav-item dropdown-toggle" style="float: inline-end;" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Hello, <b>Name</b></div>
+                    Hello, <b>{{ name }}</b></div>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown" role="menu" style="float: right;">
                     <li><a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
                 </ul>    
@@ -43,7 +43,7 @@
                 </svg>
             </button>
         </div>
-        <div class="button-group-vertical" *ngFor="let group of groups; index as i;" (dblclick)="selectGroup($event)" attr.indexvalue="{{i}}" #numIndex>
+        <div class="button-group-vertical" *ngFor="let group of groups; index as i;" (dblclick)="selectGroup($event, group.group_id)" attr.indexvalue="{{i}}" #numIndex>
             <button class="btn btn-outline-primary btn-block" routerLink="" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">{{ group.group_name }}
             <button type="button" class="btn-primary dropdown-toggle-split" style="float: right;border: none; background: transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownMenuButton" >
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

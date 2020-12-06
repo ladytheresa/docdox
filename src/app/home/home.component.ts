@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit {
   arrTempEdit : any[] = [];
   groupindex = 0;
   groups: any;
+  name: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -76,6 +77,8 @@ export class HomeComponent implements OnInit {
     this.userService.checkUser().then((res: any) => {
       if(res.status == 400){
         this.router.navigate(['/login']);
+      } else {
+        this.name = res.name;
       }
     })
   }
@@ -232,7 +235,7 @@ export class HomeComponent implements OnInit {
     this.filename = this.selectedFile.name;
   }
 
-  selectGroup(event){//DOUBLE CLICK GROUP
+  selectGroup(event, i){//DOUBLE CLICK GROUP
     this.docdetails = false;
     this.groupdetails=true;
     let target = event.target;
@@ -245,6 +248,10 @@ export class HomeComponent implements OnInit {
         target.className += " active";
       }
     }
+    const id = parseInt(i);
+    this.documentService.getUploaded(id).then((res: any) => {
+      console.log(res);
+    })
     console.log(target);
   }
 
