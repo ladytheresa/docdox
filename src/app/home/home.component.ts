@@ -152,19 +152,22 @@ export class HomeComponent implements OnInit {
       //myFormData.append('sign', this.uploadDoc.value.signature);
       myFormData.append('designated', this.uploadDoc.value.designated);
       myFormData.append('shared', this.uploadDoc.value.sharedgroup);
-      console.log(this.uploadDoc.value.dueDate);
-      this.documentService.postDoc(myFormData).then((res: any) => {
+      this.storage.upload('/documents/' + this.filename, this.selectedFile);
+      this.storage.ref('/documents/'+this.filename).getDownloadURL().subscribe((res) => {
+        myFormData.append('link', res);
         console.log(res);
-        if(res.status == 200 ){
-          this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges().subscribe(res => {
-
-          });
-          this.uploadDoc.reset(); 
-          this.arrTempDes = [];
-          this.filename="";
-          this.refresh();
-        }
+        this.documentService.postDoc(myFormData).then((res: any) => {
+          console.log(res);
+          if(res.status == 200 ){
+            this.uploadDoc.reset(); 
+            this.arrTempDes = [];
+            this.filename="";
+            this.refresh();
+          }
+        })
       })
+      console.log(this.uploadDoc.value.dueDate);
+      
       
     }
     
