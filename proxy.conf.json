@@ -14,13 +14,10 @@
      },
 
     "/docdox/*": {
-      "target": "https://docdox-dev.000webhostapp.com",
+      "target": "http://localhost",
       "secure": true,
       "logLevel": "debug",
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/docdox": ""
-      }
+      "changeOrigin": true
      }
 
 }

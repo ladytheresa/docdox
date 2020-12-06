@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   arrTempAdd : any[] = [];
   arrTempDes : any[] = [];
   arrTempEdit : any[] = [];
-  groupindex = 0;
+  selectedGroupID = "";
   groups: any;
   name: any;
 
@@ -54,19 +54,16 @@ export class HomeComponent implements OnInit {
     });
     this.uploadDoc = this.formBuilder.group({
       fileName: [null,Validators.required],
-      signature:[''],
       duedate:['',Validators.required],
       sharedgroup:['',Validators.required],
       doctype: ['', Validators.required],
       designated:['',Validators.required]
     });
     this.approveForm = this.formBuilder.group({
-      notes: [''],
-      signaturedoc:[null]
+      notes: ['']
     });
     this.rejectForm = this.formBuilder.group({
-      notes: ['',Validators.required],
-      //signaturedoc:[null]
+      notes: ['',Validators.required]
     });
   }
 
@@ -139,10 +136,12 @@ export class HomeComponent implements OnInit {
   uploadDocument(){ //upload modal
     this.submitted=true;
     this.uploadDoc.controls['designated'].setValue(this.arrTempDes);
-    if(this.uploadDoc.get('signature').value == ""){
-      this.uploadDoc.controls['signature'].setValue("false");
-    }
+    //let a = this.uploadDoc.get('fileName').value;  let file = a.split('\\fakepath\\', 2);
+    //console.log(file[1]);
+    //this.uploadDoc.controls['fileName'].setValue(file[1]);
+    //console.log(this.uploadDoc.get('fileName').value);
     if (this.uploadDoc.invalid) {
+      this.uploadDoc.reset(); 
       return;
     } else {
       console.log(this.uploadDoc.value);
@@ -150,7 +149,7 @@ export class HomeComponent implements OnInit {
       myFormData.append('documentName', this.filename);
       myFormData.append('due', this.uploadDoc.value.duedate);
       myFormData.append('type', this.uploadDoc.value.doctype);
-      myFormData.append('sign', this.uploadDoc.value.signature);
+      //myFormData.append('sign', this.uploadDoc.value.signature);
       myFormData.append('designated', this.uploadDoc.value.designated);
       myFormData.append('shared', this.uploadDoc.value.sharedgroup);
       console.log(this.uploadDoc.value.dueDate);
@@ -163,6 +162,7 @@ export class HomeComponent implements OnInit {
           this.uploadDoc.reset(); 
           this.arrTempDes = [];
           this.filename="";
+          this.refresh();
         }
       })
       
@@ -193,6 +193,8 @@ export class HomeComponent implements OnInit {
     this.rejectForm.reset(); 
   }
 
+  refresh(): void { window.location.reload(); }
+
   // Move Up Move Down Group (NOT YET WORKING)
   moveUp(index: number) {
     console.log("up", this.groups[index]);
@@ -217,14 +219,14 @@ export class HomeComponent implements OnInit {
         console.log('one click');
         this.docdetails = true;
         this.groupdetails=false;
-        let sign = "false"; //setting signature required or not
+        /*let sign = "false"; setting signature required or not
         if(sign === "true"){
           this.approveForm.get("signaturedoc").setValidators([Validators.required]);
           console.log("signature required");
         } else {       
           this.approveForm.get("signaturedoc").setValidators([]);
         }        
-        this.approveForm.controls["signaturedoc"].updateValueAndValidity();
+        this.approveForm.controls["signaturedoc"].updateValueAndValidity();*/
       }
     }, 250);
   }
@@ -270,11 +272,11 @@ export class HomeComponent implements OnInit {
 
   }
   
-  logIndex(el){ //test passing data to modal
+  logGroupID(el){ //test passing data to modal
 
-    this.groupindex = el.getAttribute('indexvalue');
+    this.selectedGroupID = el.getAttribute('selectedGroupID');
     //let messageId = el.dataset.messageId;
-    console.log("Index value: ", this.groupindex);
-
+    console.log("Group ID: ", this.selectedGroupID);
   }
+
 }
