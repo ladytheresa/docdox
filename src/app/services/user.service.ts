@@ -21,6 +21,32 @@ export class UserService {
     });
   }
 
+  getGroupData(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getgroup.php?id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  addGroup(values){
+    return new Promise((resolve, reject) => {
+      this.http.post('docdox/postgroup.php', values).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
   login(value){
     return new Promise((resolve, reject) => {
       this.http.post('docdox/user.php', value).subscribe(
@@ -44,6 +70,8 @@ export class UserService {
           reject(err);
         }
       )
-    })
-  }
+    });
+  };
+
+
 }

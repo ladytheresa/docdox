@@ -12,8 +12,7 @@ import { UserService } from '../services/user.service';
   styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit {
-  fakeGroup = Array(3);
-  clicked: boolean = false;
+  isSelected: boolean = false;
   isSingleClick:boolean = true;
   docdetails:boolean=false;
   groupdetails:boolean=false;
@@ -21,6 +20,7 @@ export class HomeComponent implements OnInit {
   private selectedFile: File;
   filename: string = "";
   pdfSrc = "";
+  previewSource="";
   addGroup: FormGroup;
   editGroup: FormGroup;
   uploadDoc: FormGroup;
@@ -32,6 +32,12 @@ export class HomeComponent implements OnInit {
   arrTempEdit : any[] = [];
   selectedGroupID = "";
   groups: any;
+  groupdata:any;
+  name:any;
+  role:any;
+  documents: any;
+  currDocName:any;
+  documentdetail:any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -69,13 +75,17 @@ export class HomeComponent implements OnInit {
   fetchData(){
     this.userService.getGroups().then((res: any) => {
       this.groups = res.result;
-    })
+    });
     this.userService.checkUser().then((res: any) => {
       if(res.status == 400){
         this.router.navigate(['/login']);
+      } else{
+        this.name = res.name;
+        this.role = res.role;
       }
-    })
+    });
   }
+
 
   get f() { return this.addGroup.controls;}
   get a() { return this.editGroup.controls;}
@@ -113,11 +123,22 @@ export class HomeComponent implements OnInit {
     this.addGroup.controls['membersEmail'].setValue(this.arrTempAdd);
     if (this.addGroup.invalid) {
       return;
-    }
+    } else {
     console.log(this.addGroup.value);
+    var myFormData = new FormData();
+    myFormData.append('groupName', this.addGroup.value.groupName);
+    myFormData.append('email', this.addGroup.value.membersEmail);
+      this.documentService.postDoc(myFormData).then((res: any) => {
+        console.log(res);
+        if(res.status == 200 ){
+          console.log("Successfully added group");
+          this.addGroup.reset(); 
+          this.arrTempAdd = [];
+          this.refresh();
+        }
+      });
+    }
     this.submitted=false;
-    this.addGroup.reset(); 
-    this.arrTempAdd = [];
   }
   saveChanges(){ //edit group modal
     this.submitted=true;
@@ -126,17 +147,15 @@ export class HomeComponent implements OnInit {
       return;
     }
     console.log(this.editGroup.value);
-    this.submitted=false;
     this.editGroup.reset(); 
     this.arrTempEdit = [];
+    //this.refresh();
+
+    this.submitted=false;
   }
   uploadDocument(){ //upload modal
     this.submitted=true;
     this.uploadDoc.controls['designated'].setValue(this.arrTempDes);
-    //let a = this.uploadDoc.get('fileName').value;  let file = a.split('\\fakepath\\', 2);
-    //console.log(file[1]);
-    //this.uploadDoc.controls['fileName'].setValue(file[1]);
-    //console.log(this.uploadDoc.get('fileName').value);
     if (this.uploadDoc.invalid) {
       this.uploadDoc.reset(); 
       return;
@@ -149,25 +168,27 @@ export class HomeComponent implements OnInit {
       //myFormData.append('sign', this.uploadDoc.value.signature);
       myFormData.append('designated', this.uploadDoc.value.designated);
       myFormData.append('shared', this.uploadDoc.value.sharedgroup);
-      console.log(this.uploadDoc.value.dueDate);
-      this.documentService.postDoc(myFormData).then((res: any) => {
+      this.storage.upload('/documents/' + this.filename, this.selectedFile);
+      this.storage.ref('/documents/'+this.filename).getDownloadURL().subscribe((res) => {
+        myFormData.append('link', res);
         console.log(res);
-        if(res.status == 200 ){
-          this.storage.upload('/documents/' + this.filename, this.selectedFile).snapshotChanges().subscribe(res => {
-
-          });
-          this.uploadDoc.reset(); 
-          this.arrTempDes = [];
-          this.filename="";
-          this.refresh();
-        }
+        this.documentService.postDoc(myFormData).then((res: any) => {
+          console.log(res);
+          if(res.status == 200 ){
+            this.uploadDoc.reset(); 
+            this.arrTempDes = [];
+            this.filename="";
+            this.refresh();
+          }
+        })
       })
-      
+      console.log(this.uploadDoc.value.dueDate);
     }
     
     this.submitted=false;
     
   }
+
   approve(){//approve doc modal
     this.submitted=true;
     if (this.approveForm.invalid) {
@@ -209,21 +230,22 @@ export class HomeComponent implements OnInit {
     this.groups[y] = b;
   }
 
-  oneClick(){ // SINGLE CLICK CARD
+  oneClick(docid){ // SINGLE CLICK CARD
     this.isSingleClick=true;
     setTimeout(()=>{
       if(this.isSingleClick){
         console.log('one click');
         this.docdetails = true;
         this.groupdetails=false;
-        /*let sign = "false"; setting signature required or not
-        if(sign === "true"){
-          this.approveForm.get("signaturedoc").setValidators([Validators.required]);
-          console.log("signature required");
-        } else {       
-          this.approveForm.get("signaturedoc").setValidators([]);
-        }        
-        this.approveForm.controls["signaturedoc"].updateValueAndValidity();*/
+        this.documentService.getUploadedDetail(docid).then((res: any) => {
+          this.documentdetail = res.result;
+          for(let doc of this.documentdetail){
+             let fullname = doc.document_name;
+             let current = fullname.split(".", 2);
+             this.currDocName=current[0];   
+          }
+        });
+    
       }
     }, 250);
   }
@@ -234,30 +256,47 @@ export class HomeComponent implements OnInit {
     this.filename = this.selectedFile.name;
   }
 
-  selectGroup(event){//DOUBLE CLICK GROUP
+  selectGroup(group,i){//SINGLE CLICK GROUP
     this.docdetails = false;
     this.groupdetails=true;
-    let target = event.target;
-    if (target.nodeName === "BUTTON"){
-      let isCertainButtonAlreadyActive = target.parentElement.querySelector(".active");
-      if( isCertainButtonAlreadyActive ) {
-        isCertainButtonAlreadyActive.classList.remove("active");
-      }
-      else{  
-        target.className += " active";
-      }
+    for(let but of this.groups) {
+      but.isSelected = false;
     }
-    console.log(target);
+    group.isSelected = true;
+
+    const id = parseInt(i);
+    if(this.role==1 || this.role==2){ //employee and pm can see all the doc and group details
+      this.documentService.getUploaded(id).then((res: any) => {
+        this.documents = res.result;
+        console.log(res);
+      });  
+      this.userService.getGroupData(id).then((res: any) => {
+        this.groupdata = res.result;
+        console.log(res);
+      });
+      console.log(this.groupdata);  
+    }
+    if(this.role==2||this.role==3){ //boss and pm can see the needing approval category
+
+    }
+
   }
 
-  doubleClick(){//DOUBLE CLICK CARD TO PREVIEW PDF
+  doubleClick(docid){//DOUBLE CLICK CARD TO PREVIEW PDF
     console.log('double click');
+    console.log(docid);
     this.isSingleClick=false;
-    var str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
-    let link = str.split("/o/", 2);
-    //console.log(link[1]);
-    this.pdfSrc="o/"+link[1];
-    
+    this.documentService.getUploadedDetail(docid).then((res: any) => {
+      this.documentdetail = res.result;
+      for(let doc of this.documentdetail){
+        //let str = doc.link;
+        let str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
+        let link = str.split("/o/", 2);
+        this.pdfSrc="o/"+link[1];
+      }  
+      console.log(res);
+    });
+    //let link = str.split("/o/", 2);
     document.getElementById("openPreviewButton").click();
   }
 
@@ -270,6 +309,15 @@ export class HomeComponent implements OnInit {
     this.selectedGroupID = el.getAttribute('selectedGroupID');
     //let messageId = el.dataset.messageId;
     console.log("Group ID: ", this.selectedGroupID);
+    this.userService.getGroupData(this.selectedGroupID).then((res: any) => {
+      this.groupdata = res.result;
+      for(let group of this.groupdata){
+        this.arrTempEdit = group.names;
+        this.editGroup.get('egroupName').setValue(group.group_name);
+     }
+      console.log(res);
+    });
+
   }
 
 }
