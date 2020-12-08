@@ -1,0 +1,44 @@
+<nav class="navbar navbar-light" style="background-color: #00477D">
+    <div class="col-2">
+        <a class="navbar-brand" style="color: white;">
+            <img src="../../assets/logo.png" style="margin-right: 10px" width="40" height="40" alt="DOCDOX">
+            <img src="../../assets/text white.png" height="25" alt="DOCDOX">
+        </a>    
+    </div>
+    <div class="col-7">
+        <div class="input-group" style="background-color: white;border-radius: 15px;padding: 5px;">
+            <div class="input-group-prepend">
+                <svg width="20" height="40" viewBox="0 0 16 16" class="bi bi-search" aria-hidden="true" fill="grey" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                    <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                </svg>
+            </div>
+            <input class="form-control" type="search" placeholder="Search" style="border:none;" >
+        </div>
+    </div> 
+    <div class="col-3" style="text-align: right;color: white;">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                <div class="nav-item dropdown-toggle" style="float: inline-end;" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Hello, <b>{{this.name}}</b></div>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown" role="menu" style="float: right;">
+                    <li><a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">Logout</a></li>
+                </ul>    
+            </div>
+        </div>        
+    </div>  
+
+</nav>
+
+<div class="container-fluid" style="padding:15px;">
+    <div class="row">
+        <div class="col-2">
+            <div class="button-group-vertical" >
+                <button class="btn btn-outline-primary btn-block" *ngFor="let button of buttons" (click)="select(button)" [ngClass]="{'active': button.isSelected}" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">
+                    {{button.text}}
+                </button>
+            </div>    
+        </div>
+    </div>
+</div>

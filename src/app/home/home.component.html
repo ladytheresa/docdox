@@ -36,15 +36,15 @@
 <div class="row">
     <div class="col-2">
         <div>
-            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#uploadModal" style="border-radius: 20px;">+ Upload</button>&nbsp;
-            <button class="btn btn-outline-primary"  style="border-radius: 35px;" data-toggle="modal" data-target="#addgroupModal">
+            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#uploadModal" style="border-radius: 20px;" *ngIf="this.role!=3">+ Upload</button>&nbsp;
+            <button class="btn btn-outline-primary"  style="border-radius: 35px;" data-toggle="modal" data-target="#addgroupModal" *ngIf="this.role==2">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
                 </svg>
             </button>
         </div>
         <div class="button-group-vertical" >
-            <button class="btn btn-outline-primary btn-block" *ngFor="let group of groups; index as i;" (click)="selectGroup(group, group.group_id)" attr.selectedGroupID="{{group.group_id}}" #selectedGroupID [ngClass]="{'active': group.isSelected}" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">{{ group.group_name }}
+            <button class="btn btn-outline-primary btn-block" *ngFor="let group of groups; index as i;" id="{{'id'+ i}}" name="{{'id'+i}}" (click)="selectGroup(group, group.group_id)" attr.selectedGroupID="{{group.group_id}}" #selectedGroupID [ngClass]="{'active': group.isSelected}" style="border-radius: 30px; border:none;text-align: left; margin-top: 20px;">{{ group.group_name }}
             <button type="button" class="btn-primary dropdown-toggle-split" style="float: right;border: none; background: transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownMenuButton" >
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
@@ -87,24 +87,25 @@
               </svg>
             </div>
         </div>
-        <div class="row" style="margin-right: 10px; margin-bottom: 25px;">
-            <div class="col-4" (click)="oneClick(doc.document_id)" (dblclick)="doubleClick(doc.document_id)" *ngFor="let doc of documents">
+        <div *ngIf="needapprove!=null">
+            <div class="row" style="margin-right: 10px; margin-bottom: 25px;">
+            <div class="col-4" (click)="oneClick(doc.document_id, 'assess')" (dblclick)="doubleClick(doc.document_id)" *ngFor="let doc of needapprove">
                 <div class="card border-dark mb-3" style="max-width: 15rem;" *ngIf="doc.doc_status=='1'">
                     <div class="card-body">
-                        {{doc.document_name}}
-                    </div>
-                    <div class="card-footer bg-transparent border-dark">
-                        <div>
                             <div *ngIf="doc.doc_status == '1'">
                                 <img src="../../assets/yellow.png" height="15px" style="margin-right: 10px; vertical-align: middle;"> 
-                                <span>Pending</span>    
+                                <span>{{doc.document_name}}</span>    
                             </div>
-                         </div>
                     </div>
+
                 </div>    
             </div>   
+        </div>    
         </div>
+        <div *ngIf="needapprove==null || needapprove.length==0">
+            <p style="text-align: center; color: grey; margin-right: 10px;">No Documents needing approval</p>
         </div>
+    </div><!--if role-->
         <div *ngIf="this.role==1 || this.role==2">
         <div class="row">
             <div class="col-10" style="margin-bottom:25px;"><h5><b>Files</b></h5></div>
@@ -113,34 +114,33 @@
               </svg>
             </div>
         </div>
-        <div class="row" style="margin-right: 10px; margin-bottom: 25px;">
-            <div class="col-4" (click)="oneClick(doc.document_id)" (dblclick)="doubleClick(doc.document_id)" *ngFor="let doc of documents">
+        <div *ngIf="documents!=null">
+            <div class="row" style="margin-right: 10px; margin-bottom: 25px;">
+            <div class="col-4" (click)="oneClick(doc.document_id, 'files')" (dblclick)="doubleClick(doc.document_id)" *ngFor="let doc of documents">
                 <div class="card border-dark mb-3" style="max-width: 15rem;">
-                    <div class="card-body">
-                        {{doc.document_name}}
-                    </div>
-                    <div class="card-footer bg-transparent border-dark">
-                        <div>
+                        <div class="card-body">
                             <div *ngIf="doc.doc_status == '1'">
                                 <img src="../../assets/yellow.png" height="15px" style="margin-right: 10px; vertical-align: middle;"> 
-                                <span>Pending</span>    
+                                <span>{{doc.document_name}}</span>    
                             </div>
                             <div *ngIf="doc.doc_status == '2'">
                                 <img src="../../assets/green.png" height="15px" style="margin-right: 10px; vertical-align: middle;"> 
-                                <span>Approve</span>    
+                                <span>{{doc.document_name}}</span>    
                             </div>
                             <div *ngIf="doc.doc_status == '3'">
                                 <img src="../../assets/red.png" height="15px" style="margin-right: 10px; vertical-align: middle;"> 
-                                <span>Reject</span>    
+                                <span>{{doc.document_name}}</span>    
                             </div>
-
-                         </div>
-                    </div>
-                </div>    
-            </div>   
-        </div> <!--end of #Files-->
-    </div> <!-- end of ngIf-->
-    </div><!--End of the middle section-->
+                        </div>
+                    </div>    
+                </div>   
+            </div><!-- end of null ngIf-->
+        </div> 
+        <div *ngIf="documents==null || documents.length==0" >
+            <p style="text-align: center; color: grey; margin-right: 10px;">No Documents available</p>
+        </div>        
+    </div>  <!--end of #Files / role --> 
+</div><!--End of the middle section-->
     <div class="col-3">
         <div *ngIf="docdetails==true">
         <div *ngFor="let doc of documentdetail">

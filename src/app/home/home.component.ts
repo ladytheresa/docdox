@@ -36,8 +36,10 @@ export class HomeComponent implements OnInit {
   name:any;
   role:any;
   documents: any;
+  needapprove: any;
   currDocName:any;
   documentdetail:any;
+  tempSelected:any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -70,6 +72,7 @@ export class HomeComponent implements OnInit {
     this.rejectForm = this.formBuilder.group({
       notes: ['',Validators.required]
     });
+    this.setgroupactive();
   }
 
   fetchData(){
@@ -128,7 +131,7 @@ export class HomeComponent implements OnInit {
     var myFormData = new FormData();
     myFormData.append('groupName', this.addGroup.value.groupName);
     myFormData.append('email', this.addGroup.value.membersEmail);
-      this.documentService.postDoc(myFormData).then((res: any) => {
+      this.userService.addGroup(myFormData).then((res: any) => {
         console.log(res);
         if(res.status == 200 ){
           console.log("Successfully added group");
@@ -168,21 +171,22 @@ export class HomeComponent implements OnInit {
       //myFormData.append('sign', this.uploadDoc.value.signature);
       myFormData.append('designated', this.uploadDoc.value.designated);
       myFormData.append('shared', this.uploadDoc.value.sharedgroup);
-      this.storage.upload('/documents/' + this.filename, this.selectedFile);
-      this.storage.ref('/documents/'+this.filename).getDownloadURL().subscribe((res) => {
-        myFormData.append('link', res);
-        console.log(res);
-        this.documentService.postDoc(myFormData).then((res: any) => {
+      this.storage.upload('/documents/' + this.filename, this.selectedFile).then(res=>{
+        this.storage.ref('/documents/'+this.filename).getDownloadURL().subscribe((res) => {
+          myFormData.append('link', res);
           console.log(res);
-          if(res.status == 200 ){
-            this.uploadDoc.reset(); 
-            this.arrTempDes = [];
-            this.filename="";
-            this.refresh();
-          }
-        })
-      })
-      console.log(this.uploadDoc.value.dueDate);
+          this.documentService.postDoc(myFormData).then((res: any) => {
+            console.log(res);
+            if(res.status == 200 ){
+              this.uploadDoc.reset(); 
+              this.arrTempDes = [];
+              this.filename="";
+              this.refresh();
+            }
+          });
+        });
+        console.log(this.uploadDoc.value.dueDate);  
+      });
     }
     
     this.submitted=false;
@@ -211,6 +215,9 @@ export class HomeComponent implements OnInit {
     this.rejectForm.reset(); 
   }
 
+  setgroupactive(){
+    //document.getElementById("id0").click();
+  }
   refresh(): void { window.location.reload(); }
 
   // Move Up Move Down Group (NOT YET WORKING)
@@ -230,22 +237,33 @@ export class HomeComponent implements OnInit {
     this.groups[y] = b;
   }
 
-  oneClick(docid){ // SINGLE CLICK CARD
+  oneClick(docid, type:string){ // SINGLE CLICK CARD
     this.isSingleClick=true;
     setTimeout(()=>{
       if(this.isSingleClick){
         console.log('one click');
         this.docdetails = true;
         this.groupdetails=false;
-        this.documentService.getUploadedDetail(docid).then((res: any) => {
-          this.documentdetail = res.result;
-          for(let doc of this.documentdetail){
-             let fullname = doc.document_name;
-             let current = fullname.split(".", 2);
-             this.currDocName=current[0];   
-          }
-        });
-    
+        if(type=="files"){
+          this.documentService.getUploadedDetail(docid).then((res: any) => {
+            this.documentdetail = res.result;
+            for(let doc of this.documentdetail){
+               let fullname = doc.document_name;
+               let current = fullname.split(".", 2);
+               this.currDocName=current[0];   
+            }
+          });  
+        }
+        else if(type=="assess"){
+          this.documentService.getNeedApproveDetail(docid).then((res: any) => {
+            this.documentdetail = res.result;
+            for(let doc of this.documentdetail){
+               let fullname = doc.document_name;
+               let current = fullname.split(".", 2);
+               this.currDocName=current[0];   
+            }
+          });  
+        }
       }
     }, 250);
   }
@@ -277,7 +295,10 @@ export class HomeComponent implements OnInit {
       console.log(this.groupdata);  
     }
     if(this.role==2||this.role==3){ //boss and pm can see the needing approval category
-
+      this.documentService.getNeedApprove(id).then((res: any) => {
+        this.needapprove = res.result;
+        console.log(res);
+      });  
     }
 
   }
@@ -289,8 +310,8 @@ export class HomeComponent implements OnInit {
     this.documentService.getUploadedDetail(docid).then((res: any) => {
       this.documentdetail = res.result;
       for(let doc of this.documentdetail){
-        //let str = doc.link;
-        let str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
+        let str = doc.link;
+        //let str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
         let link = str.split("/o/", 2);
         this.pdfSrc="o/"+link[1];
       }  

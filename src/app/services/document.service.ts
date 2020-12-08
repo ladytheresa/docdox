@@ -46,4 +46,31 @@ export class DocumentService {
       );
     });
   }
+
+  getNeedApprove(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getapprove.php?view_id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  getNeedApproveDetail(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getapprove.php?id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
 }
