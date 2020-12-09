@@ -165,19 +165,19 @@
                     <div class="col">{{doc.uploader}}</div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
-                    <div class="col-3">Modified</div>
-                    <div class="col-1">:</div>
-                    <div class="col">{{doc.modified | date:'d MMMM yyyy hh:mm:ss'}}</div>
-                </div>
-                <div class="row" style="margin-top: 10px;">
                     <div class="col-3">Created</div>
                     <div class="col-1">:</div>
                     <div class="col">{{doc.created | date:'d MMMM yyyy hh:mm:ss'}}</div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
+                    <div class="col-3">Modified</div>
+                    <div class="col-1">:</div>
+                    <div class="col">{{doc.modified | date:'d MMMM yyyy hh:mm:ss'}}</div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
                     <div class="col-3">Due Date</div>
                     <div class="col-1">:</div>
-                    <div class="col">{{doc.due_date | date:'d MMMM yyyy hh:mm:ss'}}</div>
+                    <div class="col">{{doc.due_date | date:'d MMMM yyyy'}}</div>
                 </div>
                 <div class="row" style="margin-top: 10px;">
                     <div class="col-3">Status</div>
