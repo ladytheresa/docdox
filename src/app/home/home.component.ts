@@ -5,15 +5,18 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { DocumentService } from '../services/document.service';
 import { UserService } from '../services/user.service';
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.css"],
+  providers: [DatePipe]
 })
 export class HomeComponent implements OnInit {
   isSelected: boolean = false;
   isSingleClick:boolean = true;
+  isAssesser:boolean=false;
   docdetails:boolean=false;
   groupdetails:boolean=false;
   selected: string;
@@ -30,14 +33,18 @@ export class HomeComponent implements OnInit {
   arrTempAdd : any[] = [];
   arrTempDes : any[] = [];
   arrTempEdit : any[] = [];
+  tempArray : any[] = [];
   selectedGroupID = "";
   groups: any;
   groupdata:any;
   name:any;
   role:any;
   documents: any;
+  logs:any;
   needapprove: any;
+  needapproveserial: any;
   currDocName:any;
+  currDocID:any;
   documentdetail:any;
   tempSelected:any;
 
@@ -46,7 +53,8 @@ export class HomeComponent implements OnInit {
     private documentService: DocumentService,
     private userService: UserService,
     private storage: AngularFireStorage,
-    private router: Router
+    private router: Router,
+    private datepipe: DatePipe
   ) {}
 
   ngOnInit() {
@@ -72,7 +80,6 @@ export class HomeComponent implements OnInit {
     this.rejectForm = this.formBuilder.group({
       notes: ['',Validators.required]
     });
-    this.setgroupactive();
   }
 
   fetchData(){
@@ -199,10 +206,19 @@ export class HomeComponent implements OnInit {
       console.log("invalid");
       return;
     }
-    console.log(this.approveForm.value);
+    var myFormData = new FormData();
+    myFormData.append('id', this.currDocID);
+    myFormData.append('notes', this.approveForm.value.notes);
+    myFormData.append('status', '2');
+    this.documentService.assess(myFormData).then((res: any) => {
+      console.log(res);
+      if(res.status == 200 ){
+        this.approveForm.reset(); 
+        this.refresh();
+      }
+    });
+
     this.submitted=false;
-    this.approveForm.reset(); 
-    this.filename="";
   }
   reject(){//reject doc modal
     this.submitted=true;
@@ -210,14 +226,22 @@ export class HomeComponent implements OnInit {
       console.log("invalid");
       return;
     }
-    console.log(this.rejectForm.value);
+    var myFormData = new FormData();
+    myFormData.append('id', this.currDocID);
+    myFormData.append('notes', this.rejectForm.value.notes);
+    myFormData.append('status', '3');
+    this.documentService.assess(myFormData).then((res: any) => {
+      console.log(res);
+      if(res.status == 200 ){
+        this.rejectForm.reset(); 
+        this.refresh();
+      }
+    });
+
     this.submitted=false;
-    this.rejectForm.reset(); 
+
   }
 
-  setgroupactive(){
-    //document.getElementById("id0").click();
-  }
   refresh(): void { window.location.reload(); }
 
   // Move Up Move Down Group (NOT YET WORKING)
@@ -237,14 +261,28 @@ export class HomeComponent implements OnInit {
     this.groups[y] = b;
   }
 
-  oneClick(docid, type:string){ // SINGLE CLICK CARD
+  oneClick(doc,docid, type:string){ // SINGLE CLICK CARD
     this.isSingleClick=true;
     setTimeout(()=>{
       if(this.isSingleClick){
         console.log('one click');
+        for(let but of this.documents) {
+          but.isSelected = false;
+        }
+        for(let but of this.needapprove){
+          but.isSelected = false;
+        }
+        doc.isSelected = true;
+    
         this.docdetails = true;
         this.groupdetails=false;
+        this.documentService.getLog(docid).then((res: any) => {
+          this.logs = res.result;
+          console.log(res);
+        });  
+
         if(type=="files"){
+          this.isAssesser=false;
           this.documentService.getUploadedDetail(docid).then((res: any) => {
             this.documentdetail = res.result;
             for(let doc of this.documentdetail){
@@ -255,6 +293,7 @@ export class HomeComponent implements OnInit {
           });  
         }
         else if(type=="assess"){
+          this.isAssesser=true;
           this.documentService.getNeedApproveDetail(docid).then((res: any) => {
             this.documentdetail = res.result;
             for(let doc of this.documentdetail){
@@ -297,36 +336,71 @@ export class HomeComponent implements OnInit {
     if(this.role==2||this.role==3){ //boss and pm can see the needing approval category
       this.documentService.getNeedApprove(id).then((res: any) => {
         this.needapprove = res.result;
-        console.log(res);
+        this.needapprove.forEach(element=>{
+          if(element.doc_status=='1'){
+            this.tempArray.push(element);
+          }
+        });
+        this.documentService.getNeedApproveSerial(id).then((res: any) => {
+          this.needapproveserial = res.result;
+          this.needapproveserial.forEach(element=>{
+            if(element.doc_status=='1'){
+              this.tempArray.push(element);
+            }
+          });
+        });  
+        this.needapprove=this.tempArray;
+        this.tempArray = [];
+        console.log(res);    
       });  
+    
     }
 
   }
 
-  doubleClick(docid){//DOUBLE CLICK CARD TO PREVIEW PDF
+  doubleClick(docid, type:string){//DOUBLE CLICK CARD TO PREVIEW PDF
     console.log('double click');
     console.log(docid);
     this.isSingleClick=false;
-    this.documentService.getUploadedDetail(docid).then((res: any) => {
-      this.documentdetail = res.result;
-      for(let doc of this.documentdetail){
-        let str = doc.link;
-        //let str = "https://firebasestorage.googleapis.com/v0/b/docdox-4ba5a.appspot.com/o/documents%2FContoh_Jurnal_Game%20(2).pdf?alt=media&token=49328aca-1cd2-4486-a5f7-e8e0af740b51";
-        let link = str.split("/o/", 2);
-        this.pdfSrc="o/"+link[1];
-      }  
-      console.log(res);
-    });
+
+    if(type=="files"){
+      this.documentService.getUploadedDetail(docid).then((res: any) => {
+        this.documentdetail = res.result;
+        for(let doc of this.documentdetail){
+          console.log(doc.link);
+          let str = doc.link;
+          let link = str.split("/o/", 2);
+          this.pdfSrc="o/"+link[1];
+        }  
+        console.log(res);
+      });  
+    }
+    else if(type=="assess"){
+      this.documentService.getNeedApproveDetail(docid).then((res: any) => {
+        this.documentdetail = res.result;
+        for(let doc of this.documentdetail){
+          console.log(doc.link);
+          let str = doc.link;
+          let link = str.split("/o/", 2);
+          this.pdfSrc="o/"+link[1];
+        }
+      });  
+    }
+
     //let link = str.split("/o/", 2);
     document.getElementById("openPreviewButton").click();
   }
 
   logout(){
+    this.userService.logout().then((res: any) => {
+        this.router.navigate(['/login']);
+        this.name = null;
+        this.role = null;
+    });
 
   }
   
   logGroupID(el){ //test passing data to modal
-
     this.selectedGroupID = el.getAttribute('selectedGroupID');
     //let messageId = el.dataset.messageId;
     console.log("Group ID: ", this.selectedGroupID);
@@ -338,7 +412,13 @@ export class HomeComponent implements OnInit {
      }
       console.log(res);
     });
-
   }
+
+  logDocID(el){ //test passing data to modal
+
+    this.currDocID = el.getAttribute('currDocID');
+    console.log("DocID: ", this.currDocID);
+  }
+
 
 }

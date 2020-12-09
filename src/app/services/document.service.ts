@@ -21,6 +21,32 @@ export class DocumentService {
     });
   }
 
+  assess(values){
+    return new Promise((resolve, reject) => {
+      this.http.post('docdox/assess.php', values).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
+  getLog(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getlog.php?id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+  
   getUploaded(id){
     return new Promise((resolve, reject) => {
       this.http.get('docdox/getuploaded.php?view_id='+id).subscribe(
@@ -59,6 +85,20 @@ export class DocumentService {
       );
     });
   }
+
+  getNeedApproveSerial(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getapproveserial.php?view_id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
 
   getNeedApproveDetail(id){
     return new Promise((resolve, reject) => {
