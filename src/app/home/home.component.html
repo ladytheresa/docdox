@@ -79,11 +79,10 @@
     </div>
 
     <div class="col-7" >
-        <div *ngIf="needapprove==null || documents==null">
+        <div *ngIf="this.role==2||this.role==3">
+        <div *ngIf="needapprove==null && this.role==3">
             <p style="text-align: center; color: grey; margin-right: 10px;margin-top: 30px;">Please pick a folder</p>
         </div>
-
-        <div *ngIf="this.role==2||this.role==3">
         <div class="row" *ngIf="needapprove!=null">
             <div class="col-10" style="margin-bottom:25px;"><h5><b>Needing Approval</b></h5></div>
         </div>
@@ -106,6 +105,9 @@
         </div>
     </div><!--if role-->
         <div *ngIf="this.role==1 || this.role==2">
+        <div *ngIf="documents==null">
+            <p style="text-align: center; color: grey; margin-right: 10px; margin-top: 30px;">Please pick a folder</p>
+        </div>    
         <div class="row" *ngIf="documents!=null">
             <div class="col-10" style="margin-bottom:25px;"><h5><b>Files</b></h5></div>
         </div>
@@ -266,7 +268,7 @@
                     <div *ngIf="filename!=null">
                         {{this.filename}}
                     </div>
-                    <input style="display: none" type="file" (change)="onFileSelect($event)" #hiddenfileinput formControlName="fileName" [ngClass]="{ 'is-invalid': submitted && d.fileName.errors }">
+                    <input style="display: none" type="file" accept="application/pdf" (change)="onFileSelect($event)" #hiddenfileinput formControlName="fileName" [ngClass]="{ 'is-invalid': submitted && d.fileName.errors }">
                 </button>
                 <div *ngIf="submitted && d.fileName.errors" class="invalid-feedback">
                     <div *ngIf="d.fileName.errors.required">File is required</div>

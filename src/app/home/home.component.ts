@@ -92,6 +92,7 @@ export class HomeComponent implements OnInit {
       } else{
         this.name = res.name;
         this.role = res.role;
+        console.log(this.role);
       }
     });
   }
@@ -266,11 +267,16 @@ export class HomeComponent implements OnInit {
     setTimeout(()=>{
       if(this.isSingleClick){
         console.log('one click');
-        for(let but of this.documents) {
-          but.isSelected = false;
+
+        if(this.role==1 || this.role==2){
+          for(let but of this.documents) {
+            but.isSelected = false;
+          }  
         }
-        for(let but of this.needapprove){
-          but.isSelected = false;
+        if(this.role==2 || this.role==3){
+          for(let but of this.needapprove){
+            but.isSelected = false;
+          }  
         }
         doc.isSelected = true;
     
@@ -393,9 +399,7 @@ export class HomeComponent implements OnInit {
 
   logout(){
     this.userService.logout().then((res: any) => {
-        this.router.navigate(['/login']);
-        this.name = null;
-        this.role = null;
+      this.refresh();
     });
 
   }
