@@ -347,15 +347,15 @@ export class HomeComponent implements OnInit {
             this.tempArray.push(element);
           }
         });
+        this.needapprove=this.tempArray;
         this.documentService.getNeedApproveSerial(id).then((res: any) => {
           this.needapproveserial = res.result;
           this.needapproveserial.forEach(element=>{
             if(element.doc_status=='1'){
-              this.tempArray.push(element);
+              this.needapprove.push(element);
             }
           });
         });  
-        this.needapprove=this.tempArray;
         this.tempArray = [];
         console.log(res);    
       });  
