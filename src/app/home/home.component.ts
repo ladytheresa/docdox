@@ -360,6 +360,10 @@ export class HomeComponent implements OnInit {
         console.log(res);    
       });  
     
+      this.userService.getGroupData(id).then((res: any) => {
+        this.groupdata = res.result;
+        console.log(res);
+      });
     }
 
   }
