@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
       if(res.response == 200){
         this.router.navigate(['']);
       } else if(res.response == 400){
-
+        alert("Login failed");
       }
      })
   }
