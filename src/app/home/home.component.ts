@@ -1,17 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
 import { AngularFireStorage } from '@angular/fire/storage';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DocumentService } from '../services/document.service';
 import { UserService } from '../services/user.service';
 import { DatePipe } from '@angular/common'
+import {MatBadgeModule} from '@angular/material/badge'; 
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.css"],
-  providers: [DatePipe]
+  providers: [DatePipe, MatBadgeModule]
 })
 export class HomeComponent implements OnInit {
   isSelected: boolean = false;
@@ -37,6 +38,7 @@ export class HomeComponent implements OnInit {
   selectedGroupID = "";
   groups: any;
   groupdata:any;
+  groupmembers:any;
   name:any;
   role:any;
   documents: any;
@@ -47,6 +49,7 @@ export class HomeComponent implements OnInit {
   currDocID:any;
   documentdetail:any;
   tempSelected:any;
+  myControl: FormControl;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -85,6 +88,7 @@ export class HomeComponent implements OnInit {
   fetchData(){
     this.userService.getGroups().then((res: any) => {
       this.groups = res.result;
+      console.log(this.groups);
     });
     this.userService.checkUser().then((res: any) => {
       if(res.status == 400){
@@ -412,14 +416,18 @@ export class HomeComponent implements OnInit {
     this.selectedGroupID = el.getAttribute('selectedGroupID');
     //let messageId = el.dataset.messageId;
     console.log("Group ID: ", this.selectedGroupID);
-    this.userService.getGroupData(this.selectedGroupID).then((res: any) => {
+    /*this.userService.getGroupData(this.selectedGroupID).then((res: any) => {
       this.groupdata = res.result;
       for(let group of this.groupdata){
         this.arrTempEdit = group.names;
         this.editGroup.get('egroupName').setValue(group.group_name);
      }
       console.log(res);
-    });
+    });*/
+    /*this.userService.getGroupMembers(this.selectedGroupID).then((res: any) => {
+      this.groupmembers = res.result.email;
+      console.log(this.groupmembers);
+    });*/
   }
 
   logDocID(el){ //test passing data to modal

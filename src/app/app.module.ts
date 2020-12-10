@@ -11,7 +11,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { environment } from '../environments/environment';
 import { AdminComponent } from './admin/admin.component';
-//import { AngularFireModule } from '@angular/fire';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,8 @@ import { AdminComponent } from './admin/admin.component';
     NgxExtendedPdfViewerModule,
     HttpClientModule,
     AngularFireStorageModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig), 
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    MatBadgeModule
   ],
   providers: [ HttpClient ],
   bootstrap: [AppComponent]

@@ -34,6 +34,19 @@ export class UserService {
     });
   }
 
+  getGroupMembers(id){
+    return new Promise((resolve, reject) => {
+      this.http.get('docdox/getemail.php?view_id='+id).subscribe(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  }
+
   addGroup(values){
     return new Promise((resolve, reject) => {
       this.http.post('docdox/postgroup.php', values).subscribe(
